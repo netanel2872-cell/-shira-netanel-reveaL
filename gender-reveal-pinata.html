@@ -335,20 +335,24 @@
     .pinata-button.fallback .pinata-fallback { display: block; }
     .pinata-button.fallback img { display: none; }
 
-    .pinata-button.hit-left .pinata-visual { animation: horse-hit-left .42s cubic-bezier(.2,.9,.35,1.2); }
-    .pinata-button.hit-right .pinata-visual { animation: horse-hit-right .42s cubic-bezier(.2,.9,.35,1.2); }
+    .pinata-button.hit-left .pinata-visual { animation: horse-hit-left .62s cubic-bezier(.16,.9,.28,1.18); }
+    .pinata-button.hit-right .pinata-visual { animation: horse-hit-right .62s cubic-bezier(.16,.9,.28,1.18); }
 
     @keyframes horse-hit-left {
       0% { transform: rotate(0) scale(1); }
-      34% { transform: rotate(-18deg) translate(-24px, 9px) scale(.91,.97); }
-      68% { transform: rotate(10deg) translateX(13px) scale(1.045); }
+      14% { transform: rotate(8deg) translate(16px, -7px) scale(1.04); }
+      38% { transform: rotate(-34deg) translate(-62px, 26px) scale(.82, 1.08); }
+      64% { transform: rotate(22deg) translate(40px, -14px) scale(1.13, .9); }
+      82% { transform: rotate(-11deg) translate(-20px, 6px) scale(.96, 1.06); }
       100% { transform: rotate(0) scale(1); }
     }
 
     @keyframes horse-hit-right {
       0% { transform: rotate(0) scale(1); }
-      34% { transform: rotate(18deg) translate(24px, 9px) scale(.91,.97); }
-      68% { transform: rotate(-10deg) translateX(-13px) scale(1.045); }
+      14% { transform: rotate(-8deg) translate(-16px, -7px) scale(1.04); }
+      38% { transform: rotate(34deg) translate(62px, 26px) scale(.82, 1.08); }
+      64% { transform: rotate(-22deg) translate(-40px, -14px) scale(1.13, .9); }
+      82% { transform: rotate(11deg) translate(20px, 6px) scale(.96, 1.06); }
       100% { transform: rotate(0) scale(1); }
     }
 
@@ -737,7 +741,7 @@
       .game-copy .eyebrow { margin-bottom: 8px; font-size: .7rem; letter-spacing: .075em; }
       h1 { margin: 0; font-size: clamp(2rem, 10.5vw, 3rem); line-height: .96; }
       .game-stage { min-height: 0; height: 100%; border-radius: 25px; }
-      .pinata-button { width: min(430px, 96%); }
+      .pinata-button { width: min(430px, 96%); transform: translateY(-26px); }
       .watchers { right: -6%; bottom: 12%; width: 41%; }
       .hammer { right: -5%; top: 0; transform: scale(.78); }
       .progress-wrap { right: 4%; bottom: 2.5%; left: 4%; }
@@ -789,7 +793,7 @@
       <div class="game-layout">
         <section class="game-copy" aria-labelledby="gameTitle">
           <p class="eyebrow">שירה ונתנאל מזמינים אתכם לרגע הגילוי</p>
-          <h1 id="gameTitle">לחצו על <em>הסוס</em></h1>
+          <h1 id="gameTitle">לחצו על <em>הפיניאטה</em></h1>
         </section>
 
         <section class="game-stage" id="gameStage" aria-label="משחק הפיניאטה">
@@ -1104,58 +1108,76 @@
         canvas.style.height = `${window.innerHeight}px`;
         context.setTransform(ratio,0,0,ratio,0,0);
         const palette = ["#ee79a8", "#ffb7d2", "#ffffff", "#e6b94f", "#ff8dba"];
-        const pieces = Array.from({ length: Math.min(200, Math.round(window.innerWidth / 5)) }, (_, index) => ({
+        const pieces = Array.from({ length: Math.min(320, Math.round(window.innerWidth / 2.4)) }, (_, index) => ({
           x: window.innerWidth * (.2 + Math.random() * .6), y: window.innerHeight * .45,
           vx: (Math.random() - .5) * 15, vy: -(Math.random() * 13 + 5), gravity: .17 + Math.random() * .12,
           rotation: Math.random() * Math.PI, spin: (Math.random() - .5) * .25,
           width: 6 + Math.random() * 8, height: 5 + Math.random() * 7, color: palette[index % palette.length], life: 1
         }));
-        const fireworkPalette = ["#ff2f8d", "#ff63aa", "#ff9ac8", "#ffd1e3", "#ffffff"];
-        const burstCount = window.innerWidth < 600 ? 5 : 7;
-        const fireworks = Array.from({ length: burstCount }, (_, burstIndex) => {
-          const centerX = window.innerWidth * (.12 + Math.random() * .76);
-          const centerY = window.innerHeight * (.13 + Math.random() * .38);
-          const delay = burstIndex * 390 + Math.random() * 180;
-          return Array.from({ length: 34 }, (_, sparkIndex) => {
-            const angle = Math.PI * 2 * (sparkIndex / 34) + (Math.random() - .5) * .15;
-            const speed = 2.8 + Math.random() * 4.4;
+        const fireworkPalette = ["#ff1684", "#ff3f9a", "#ff6fb5", "#ff98ca", "#ffc2dc", "#ffe4ef", "#ffffff", "#e6b94f"];
+        const isSmallScreen = window.innerWidth < 600;
+        const burstCount = isSmallScreen ? 14 : 18;
+        const sparksPerBurst = isSmallScreen ? 52 : 64;
+        const bursts = Array.from({ length: burstCount }, (_, burstIndex) => {
+          const centerX = window.innerWidth * (.07 + Math.random() * .86);
+          const centerY = window.innerHeight * (.07 + Math.random() * .48);
+          const delay = burstIndex * 240 + Math.random() * 140;
+          const sparks = Array.from({ length: sparksPerBurst }, (_, sparkIndex) => {
+            const angle = Math.PI * 2 * (sparkIndex / sparksPerBurst) + (Math.random() - .5) * .18;
+            const speed = 4.2 + Math.random() * 5.2;
             return {
               x: centerX, y: centerY, px: centerX, py: centerY,
               vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
-              delay, age: 0, maxAge: 48 + Math.random() * 25,
+              delay, age: 0, maxAge: 75 + Math.random() * 40,
               color: fireworkPalette[(sparkIndex + burstIndex) % fireworkPalette.length],
-              size: 1.4 + Math.random() * 2.4
+              size: 1.8 + Math.random() * 3.4
             };
           });
-        }).flat();
+          return { centerX, centerY, delay, sparks };
+        });
+        const fireworks = bursts.flatMap((burst) => burst.sparks);
         const started = performance.now();
         const draw = (now) => {
           const elapsed = now - started;
           context.clearRect(0,0,window.innerWidth,window.innerHeight);
           pieces.forEach((piece) => {
             piece.vy += piece.gravity; piece.x += piece.vx; piece.y += piece.vy; piece.rotation += piece.spin;
-            if (now - started > 2900) piece.life -= .013;
+            if (now - started > 3600) piece.life -= .009;
             context.save(); context.globalAlpha = Math.max(0,piece.life); context.translate(piece.x,piece.y); context.rotate(piece.rotation);
             context.fillStyle = piece.color; context.fillRect(-piece.width/2,-piece.height/2,piece.width,piece.height); context.restore();
           });
           context.save();
           context.globalCompositeOperation = "lighter";
+          bursts.forEach((burst) => {
+            const bloomAge = elapsed - burst.delay;
+            if (bloomAge < 0 || bloomAge > 360) return;
+            const bloom = Math.sin((bloomAge / 360) * Math.PI);
+            context.globalAlpha = bloom * .95;
+            context.fillStyle = "#fff3f9";
+            context.shadowBlur = 28;
+            context.shadowColor = "#ff3f9a";
+            context.beginPath();
+            context.arc(burst.centerX, burst.centerY, 5 + bloom * 22, 0, Math.PI * 2);
+            context.fill();
+          });
+          context.shadowBlur = isSmallScreen ? 10 : 15;
           fireworks.forEach((spark) => {
             if (elapsed < spark.delay || spark.age >= spark.maxAge) return;
             spark.px = spark.x; spark.py = spark.y;
-            spark.vx *= .975; spark.vy = spark.vy * .975 + .035;
+            spark.vx *= .982; spark.vy = spark.vy * .982 + .03;
             spark.x += spark.vx; spark.y += spark.vy; spark.age += 1;
             const life = Math.max(0, 1 - spark.age / spark.maxAge);
             context.globalAlpha = life;
             context.strokeStyle = spark.color;
-            context.lineWidth = spark.size * life + .45;
+            context.shadowColor = spark.color;
+            context.lineWidth = spark.size * life + .7;
             context.beginPath(); context.moveTo(spark.px, spark.py); context.lineTo(spark.x, spark.y); context.stroke();
             context.fillStyle = spark.color;
             context.beginPath(); context.arc(spark.x, spark.y, spark.size * life + .5, 0, Math.PI * 2); context.fill();
           });
           context.restore();
           const fireworksAlive = fireworks.some((spark) => elapsed < spark.delay || spark.age < spark.maxAge);
-          if (elapsed < 5200 && (pieces.some((piece) => piece.life > 0 && piece.y < window.innerHeight + 40) || fireworksAlive)) confettiAnimation = requestAnimationFrame(draw);
+          if (elapsed < 7800 && (pieces.some((piece) => piece.life > 0 && piece.y < window.innerHeight + 40) || fireworksAlive)) confettiAnimation = requestAnimationFrame(draw);
           else context.clearRect(0,0,window.innerWidth,window.innerHeight);
         };
         confettiAnimation = requestAnimationFrame(draw);
